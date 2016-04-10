@@ -1,7 +1,7 @@
 #!/bin/sh -eu
 jq . < /dev/stdin > /tmp/input
 
-touch --date=$(jq -r .version.updated < /tmp/input) /tmp/last
+touch --date="$(jq -r '.version.updated // "now"' < /tmp/input)" /tmp/last
 
 jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
   URI=$(expr match "$SOURCE" 'deb \([^ ]*\)')
@@ -9,7 +9,8 @@ jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
   COMPONENTS=$(expr match "$SOURCE" "deb $URI $SUITE \(.*\)")
 
   for COMP in $COMPONENTS; do
-    curl --silent --head --time-cond /tmp/last --remote-time "$URI/dists/$SUITE/$COMP/binary-amd64/Release" > /tmp/curl
+    curl --silent --head --time-cond /tmp/last --remote-time --output /tmp/curl \
+      "$URI/dists/$SUITE/$COMP/binary-amd64/Release"
     if grep -q '^HTTP/... 200 ' /tmp/curl; then
       touch --reference=/tmp/curl /tmp/last
     fi
