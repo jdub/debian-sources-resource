@@ -4,7 +4,7 @@ A Concourse CI resource to check for updated Debian and Ubuntu compatible packag
 
 ### Source Configuration
 
-*Required.* A list of Debian sources to be checked for updates, in `sources.list` deb line format.
+- `sources`: *Required.* A list of Debian sources to be checked for updates, in `sources.list` deb line format.
 
 ### Example
 
@@ -20,8 +20,9 @@ resources:
   type: debian-sources
   check_every: 1h
   source:
-  - deb http://au.archive.ubuntu.com/ubuntu trusty-updates main restricted universe multiverse
-  - deb http://security.ubuntu.com/ubuntu trusty-security main restricted universe multiverse
+    sources:
+    - deb http://au.archive.ubuntu.com/ubuntu trusty-updates main restricted universe multiverse
+    - deb http://security.ubuntu.com/ubuntu trusty-security main restricted universe multiverse
 
 jobs:
 - name: update-packages
