@@ -1,0 +1,19 @@
+#!/bin/sh -eu
+jq . < /dev/stdin > /tmp/input
+
+touch --date=$(jq -r .version.updated < /tmp/input) /tmp/last
+
+jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
+  URI=$(expr match "$SOURCE" 'deb \([^ ]*\)')
+  SUITE=$(expr match "$SOURCE" "deb $URI \([^ ]*\)")
+  COMPONENTS=$(expr match "$SOURCE" "deb $URI $SUITE \(.*\)")
+
+  for COMP in $COMPONENTS; do
+    curl --silent --head --time-cond /tmp/last --remote-time "$URI/dists/$SUITE/$COMP/binary-amd64/Release" > /tmp/curl
+    if grep -q '^HTTP/... 200 ' /tmp/curl; then
+      touch --reference=/tmp/curl /tmp/last
+    fi
+  done
+done
+
+echo '[{"updated":"'$(date --reference=/tmp/last --rfc-2822)'"}]'
