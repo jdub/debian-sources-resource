@@ -3,7 +3,7 @@ jq . < /dev/stdin > /tmp/input
 
 touch --date="$(jq -r '.version.updated // "now"' < /tmp/input)" /tmp/last
 
-jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
+jq -r '.source[]' < /tmp/input | while read SOURCE; do
   URI=$(expr match "$SOURCE" 'deb \([^ ]*\)')
   SUITE=$(expr match "$SOURCE" "deb $URI \([^ ]*\)")
   COMPONENTS=$(expr match "$SOURCE" "deb $URI $SUITE \(.*\)")
