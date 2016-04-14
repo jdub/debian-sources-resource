@@ -1,6 +1,8 @@
 #!/bin/sh -eu
 jq . < /dev/stdin > /tmp/input
 
+ARCH=$(jq -r '.source.arch // "amd64"' < /tmp/input)
+
 touch --date="$(jq -r '.version.updated // "now"' < /tmp/input)" /tmp/last
 
 jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
@@ -10,7 +12,7 @@ jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
 
   for COMP in $COMPONENTS; do
     curl --silent --head --time-cond /tmp/last --remote-time --output /tmp/curl \
-      "$URI/dists/$SUITE/$COMP/binary-amd64/Release"
+      "$URI/dists/$SUITE/$COMP/binary-$ARCH/Release"
     if grep -q '^HTTP/... 200 ' /tmp/curl; then
       touch --reference=/tmp/curl /tmp/last
     fi
