@@ -1,4 +1,7 @@
-#!/bin/sh -eu
+#!/bin/sh
+set -eu -o pipefail
+exec 3>&1 1>&2
+
 jq . < /dev/stdin > /tmp/input
 
 ARCH=$(jq -r '.source.arch // "amd64"' < /tmp/input)
@@ -19,4 +22,4 @@ jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
   done
 done
 
-echo '[{"updated":"'$(date --reference=/tmp/last --rfc-2822)'"}]'
+echo '[{"updated":"'$(date --reference=/tmp/last --rfc-2822)'"}]' >&3
