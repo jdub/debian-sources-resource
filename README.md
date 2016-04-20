@@ -2,13 +2,15 @@
 
 A Concourse CI resource to check for updated Debian and Ubuntu compatible package sources.
 
-### Source Configuration
+## Source Configuration
 
 - `arch`: *Optional.* The architecture to check for updates. Defaults to `amd64`.
 
 - `sources`: *Required.* A list of sources to check for updates, in `sources.list` deb line format.
 
-### Example
+## Example
+
+This pipeline will check the Ubuntu updates and security repositories every hour, triggering the next step of the build plan if there are any changes.
 
 ```yaml
 resource_types:
