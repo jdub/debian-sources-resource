@@ -6,7 +6,7 @@ A Concourse CI resource to check for updated Debian and Ubuntu compatible packag
 
 - `arch`: *Optional.* The architecture to check for updates. Defaults to `amd64`.
 
-- `sources`: *Required.* A list of Debian sources to check for updates, in `sources.list` deb line format.
+- `sources`: *Required.* A list of sources to check for updates, in `sources.list` deb line format.
 
 ### Example
 

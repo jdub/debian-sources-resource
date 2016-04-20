@@ -7,11 +7,11 @@ jq . < /dev/stdin > /tmp/input
 GREEN="\\e[32m"
 RESET="\\e[0m"
 
-ARCH=$(jq -r '.source.arch // "amd64"' < /tmp/input)
+ARCH=$(jq -r '.source.arch // "amd64"' /tmp/input)
 
-touch --date="$(jq -r '.version.updated // "@0"' < /tmp/input)" /tmp/last
+touch --date="$(jq -r '.version.updated // "@0"' /tmp/input)" /tmp/last
 
-jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
+jq -r '.source.sources[]' /tmp/input | while read SOURCE; do
   URI=$(expr match "$SOURCE" 'deb \([^ ]*\)')
   SUITE=$(expr match "$SOURCE" "deb $URI \([^ ]*\)")
   COMPONENTS=$(expr match "$SOURCE" "deb $URI $SUITE \(.*\)")
