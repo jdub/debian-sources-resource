@@ -6,7 +6,7 @@ jq . < /dev/stdin > /tmp/input
 
 ARCH=$(jq -r '.source.arch // "amd64"' < /tmp/input)
 
-touch --date="$(jq -r '.version.updated // "now"' < /tmp/input)" /tmp/last
+touch --date="$(jq -r '.version.updated // "@0"' < /tmp/input)" /tmp/last
 
 jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
   URI=$(expr match "$SOURCE" 'deb \([^ ]*\)')
