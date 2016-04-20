@@ -4,6 +4,9 @@ exec 3>&1 1>&2
 
 jq . < /dev/stdin > /tmp/input
 
+GREEN="\\e[32m"
+RESET="\\e[0m"
+
 ARCH=$(jq -r '.source.arch // "amd64"' < /tmp/input)
 
 touch --date="$(jq -r '.version.updated // "@0"' < /tmp/input)" /tmp/last
@@ -13,12 +16,17 @@ jq -r '.source.sources[]' < /tmp/input | while read SOURCE; do
   SUITE=$(expr match "$SOURCE" "deb $URI \([^ ]*\)")
   COMPONENTS=$(expr match "$SOURCE" "deb $URI $SUITE \(.*\)")
 
+  echo "$URI $SUITE"
+
   for COMP in $COMPONENTS; do
-    curl --silent --show-error --head --time-cond /tmp/last --remote-time --output /tmp/curl \
-      "$URI/dists/$SUITE/$COMP/binary-$ARCH/Release"
+    echo -n "  $COMP"
+    curl --silent --show-error --head --time-cond /tmp/last --remote-time \
+      --output /tmp/curl "$URI/dists/$SUITE/$COMP/binary-$ARCH/Release"
     if grep -q '^HTTP/... 200 ' /tmp/curl; then
+      echo -n -e " ${GREEN}updated!${RESET}"
       touch --reference=/tmp/curl /tmp/last
     fi
+    echo
   done
 done
 
