@@ -20,8 +20,8 @@ jq -r '.source.sources[]' /tmp/input | while read SOURCE; do
 
   for COMP in $COMPONENTS; do
     echo -n "  $COMP"
-    curl --silent --show-error --head --time-cond /tmp/last --remote-time \
-      --output /tmp/curl "$URI/dists/$SUITE/$COMP/binary-$ARCH/Release"
+    curl --location --max-redirs 1 --silent --show-error --head --time-cond /tmp/last \
+      --remote-time --output /tmp/curl "$URI/dists/$SUITE/$COMP/binary-$ARCH/Release"
     if grep -q '^HTTP/... 200 ' /tmp/curl; then
       echo -n -e " ${GREEN}updated!${RESET}"
       touch --reference=/tmp/curl /tmp/last
